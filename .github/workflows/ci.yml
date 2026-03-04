@@ -1,16 +1,26 @@
-name: Basic CI
+name: CI Release
 
 on:
   push:
-  pull_request:
+    branches:
+      - 'release/**'
 
 jobs:
-  build:
+  pipeline:
     runs-on: self-hosted
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Test pipeline
-        run: echo "Pipeline works"
+      - name: Run basic command
+        run: echo "Pipeline is running successfully on release!"
+
+      - name: Show Docker version
+        run: docker --version
+
+      - name: Build Docker image
+        run: docker build -t my-test-image .
+
+      - name: Run Docker container
+        run: docker run my-test-image
