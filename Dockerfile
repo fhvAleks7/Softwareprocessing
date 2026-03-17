@@ -1,10 +1,3 @@
-FROM eclipse-temurin:17-jdk
+FROM alpine:latest
 
-WORKDIR /app
-
-COPY . .
-
-RUN chmod +x ./gradlew
-RUN ./gradlew build
-
-CMD sh -c 'java -jar build/libs/*.jar'
+CMD ["echo", "Hello from inside the Docker container!"]
