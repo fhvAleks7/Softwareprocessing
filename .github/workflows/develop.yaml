@@ -8,7 +8,6 @@ on:
 jobs:
   pipeline:
     runs-on: self-hosted
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,8 +18,9 @@ jobs:
       - name: Show Docker version
         run: docker --version
 
-      - name: Build Docker image
-        run: docker build -t my-test-image .
+      - name: Generate PDF documentation
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/latex documentation.md -o documentation.pdf --pdf-engine=xelatex
+        working-directory: docs
 
-      - name: Run Docker container
-        run: docker run my-test-image
+      - name: Check output
+        run: ls docs/
