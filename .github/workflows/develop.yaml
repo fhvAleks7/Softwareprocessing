@@ -19,7 +19,7 @@ jobs:
         run: docker --version
 
       - name: Generate PDF documentation
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/latex documentation.md -o documentation.pdf --pdf-engine=xelatex
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
         working-directory: docs
 
       - name: Check output
