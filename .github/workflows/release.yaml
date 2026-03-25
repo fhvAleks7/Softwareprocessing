@@ -6,20 +6,27 @@ on:
       - 'release/**'
 
 jobs:
-  pipeline:
-    runs-on: self-hosted
+  build:
+    runs-on: [self-hosted, build]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run basic command
-        run: echo "Pipeline is running successfully on release!"
-
-      - name: Show Docker version
-        run: docker --version
-
       - name: Build Docker image
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
+        run: docker build -t demo .
 
-      - name: Tag Docker image
-        run: ls build/libs
+      - name: Tag image for registry
+        run: docker image tag demo 10.0.40.169:5000/team6/demo:latest
+
+      - name: Push image to registry
+        run: docker image push 10.0.40.169:5000/team6/demo:latest
+
+  deploy:
+    runs-on: [self-hosted, deploy]
+    needs: build
+    steps:
+      - name: Pull image from registry
+        run: docker image pull 10.0.40.169:5000/team6/demo:latest
+
+      - name: Run application
+        run: docker run -d -p 8086:8080 --name demo 10.0.40.169:5000/team6/demo:latest
