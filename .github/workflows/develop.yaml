@@ -23,3 +23,13 @@ jobs:
       
       - name: Check build output
         run: ls build/libs
+      - name: Run Unit Tests
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle test
+
+      - name: Generate PDF documentation
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
+        working-directory: docs
+
+      - name: Check output
+        run: ls docs/
+
