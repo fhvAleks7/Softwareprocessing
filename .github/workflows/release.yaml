@@ -22,11 +22,14 @@ jobs:
         run: docker image push 10.0.40.169:5000/team6/demo:latest
 
   deploy:
-    runs-on: [self-hosted, deploy]
-    needs: build
-    steps:
-      - name: Pull image from registry
-        run: docker image pull 10.0.40.169:5000/team6/demo:latest
+      runs-on: [self-hosted, deploy]
+      needs: build
+      steps:
+        - name: Pull image from registry
+          run: docker image pull 10.0.40.169:5000/team6/demo:latest
 
-      - name: Run application
-        run: docker run -d -p 8086:8080 --name demo 10.0.40.169:5000/team6/demo:latest
+        - name: Remove old container if exists
+          run: docker rm -f demo || true
+
+        - name: Run application
+          run: docker run -d -p 8086:8080 --name demo 10.0.40.169:5000/team6/demo:latest
