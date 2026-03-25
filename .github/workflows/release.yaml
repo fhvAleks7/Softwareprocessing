@@ -19,7 +19,7 @@ jobs:
         run: docker --version
 
       - name: Build Docker image
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:latest gradle build
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
 
       - name: Tag Docker image
         run: ls build/libs
