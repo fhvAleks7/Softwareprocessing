@@ -1,10 +1,8 @@
 name: CI Develop
-
 on:
   push:
     branches:
       - 'develop/**'
-
 jobs:
   pipeline:
     runs-on: [self-hosted, build]
@@ -18,13 +16,8 @@ jobs:
       - name: Show Docker version
         run: docker --version
 
-      - name: Build with Gradle
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
-      
-      - name: Check build output
-        run: ls build/libs
-      - name: Run Unit Tests
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
+      - name: Build with Gradle and JaCoCo
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build test jacocoTestReport
 
       - name: Generate PDF documentation
         run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
@@ -46,8 +39,8 @@ jobs:
 
       - name: SonarQube Analysis (CLI)
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SCANNEROPTS: >-
             -Dsonar.projectKey=team6
             -Dsonar.projectName=team6
