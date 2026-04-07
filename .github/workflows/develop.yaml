@@ -28,6 +28,13 @@ jobs:
       - name: Check output
         run: ls docs/
 
+      - name: Verify SonarCloud token
+        run: |
+          if [ -z "${{ secrets.SQTOKEN }}" ]; then
+            echo "ERROR: SQTOKEN secret is not configured!"
+            exit 1
+          fi
+
       - name: SonarQube Analysis (CLI)
         env:
           SQTOKEN: ${{ secrets.SQTOKEN }} 
