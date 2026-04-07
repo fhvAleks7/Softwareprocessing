@@ -12,28 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate PDF documentation
-        run: |
-          docker run --rm \
-            -v $(pwd)/docs:/data \
-            pandoc/latex:latest \
-            documentation.md -o documentation.pdf
-
-      - name: Upload documentation PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation
-          path: docs/documentation.pdf
-
-      - name: Run tests and generate coverage report
-        run: ./gradlew test jacocoTestReport
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: build/reports/jacoco/test/html/
-
       - name: Build Docker image
         run: docker build -t demo .
 
