@@ -19,6 +19,14 @@ jobs:
       - name: Build with Gradle and JaCoCo
         run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build test jacocoTestReport
 
+      - name: Upload JaCoCo Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/
+          retention-days: 30
+
       - name: Generate PDF documentation
         run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
         working-directory: docs
