@@ -44,7 +44,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
           SCANNEROPTS: >-
-            -Dsonar.projectKey=spexample
+            -Dsonar.projectKey=team6
+            -Dsonar.projectName=team6
             -Dsonar.sources=src/main
             -Dsonar.java.libraries=build/libs
             -Dsonar.java.binaries=build/classes
