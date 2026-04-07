@@ -10,6 +10,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Generate PDF documentation
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
+        working-directory: docs
+
       - name: Build Docker image
         run: docker build -t demo .
 
