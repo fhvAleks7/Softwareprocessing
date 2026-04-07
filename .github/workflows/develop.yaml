@@ -31,8 +31,12 @@ jobs:
         run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
         working-directory: docs
 
-      - name: Check output
-        run: ls docs/
+      - name: Upload documentation PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-pdf
+          path: docs/documentation.pdf
+          retention-days: 30
 
       - name: Verify SonarQube secrets
         run: |
