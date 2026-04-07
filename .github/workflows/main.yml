@@ -1,20 +1,20 @@
-name: CI Release
+name: CI Main
 
 on:
   push:
     branches:
-      - 'main'
+      - main
 
 jobs:
-  pipeline:
-    runs-on: self-hosted
+  deploy:
+    runs-on: [self-hosted, deploy]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Run basic command
-        run: echo "Pipeline is running successfully on release!"
+        run: echo "Deploying on main!"
 
       - name: Show Docker version
         run: docker --version
