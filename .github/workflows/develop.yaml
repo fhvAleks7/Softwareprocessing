@@ -18,8 +18,13 @@ jobs:
       - name: Show Docker version
         run: docker --version
 
+      - name: Build with Gradle
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
+      
+      - name: Check build output
+        run: ls build/libs
       - name: Run Unit Tests
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle test
+        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/home/gradle/project -w /home/gradle/project gradle:8.14-jdk17 gradle build
 
       - name: Generate PDF documentation
         run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data pandoc/extra documentation.md -o documentation.pdf
@@ -28,3 +33,33 @@ jobs:
       - name: Check output
         run: ls docs/
 
+      - name: Verify SonarQube secrets
+        run: |
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "ERROR: SONAR_TOKEN secret is not configured!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
+            echo "ERROR: SONAR_HOST_URL secret is not configured!"
+            exit 1
+          fi
+
+      - name: SonarQube Analysis (CLI)
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          SCANNEROPTS: >-
+            -Dsonar.projectKey=team6
+            -Dsonar.projectName=team6
+            -Dsonar.sources=src/main
+            -Dsonar.java.libraries=build/libs
+            -Dsonar.java.binaries=build/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+            -Dsonar.junit.reportsPath=build/test-results
+        run: |
+          docker run --rm \
+            -e SONAR_HOST_URL="${SONAR_HOST_URL}" \
+            -e SONAR_TOKEN="${SONAR_TOKEN}" \
+            -e SONAR_SCANNER_OPTS="${SCANNEROPTS}" \
+            -v "${PWD}:/usr/src" \
+            sonarsource/sonar-scanner-cli
